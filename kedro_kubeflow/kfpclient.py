@@ -95,6 +95,11 @@ class KubeflowClient(object):
                     image=image,
                     command=["kedro"],
                     arguments=["run", "--node", node.name],
+                    file_outputs={
+                        output: str(getattr(self.context.catalog.datasets, output)._filepath)
+                        for output in node.outputs
+                        if hasattr(self.context.catalog.datasets, output)
+                    },
                 )
 
                 kfp_ops[node.name].container.add_env_variable(env)
